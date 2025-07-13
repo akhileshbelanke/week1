@@ -53,7 +53,6 @@ bool linked_list_delete_iterator(struct iterator * iter) {
 }
 
 struct iterator * linked_list_create_iterator(struct linked_list * ll, size_t index) {
-struct iterator * linked_list_create_iterator(struct linked_list * ll, size_t index) {
     if (ll == NULL) {
         return NULL;
     }
@@ -251,3 +250,93 @@ bool linked_list_insert(struct linked_list * ll, size_t index, unsigned int data
     previous->next = new;
     return true; // Insertion successful   
 }
+
+bool linked_list_insert_front(struct linked_list * ll, unsigned int data) {
+    if (ll == NULL) {
+        return false; // Invalid linked list or index
+    }
+    struct node *new = (struct node *)malloc_fptr(sizeof(struct node));
+    if (new == NULL) {
+        return false; // Memory allocation failed
+    }
+
+    if (ll->head == NULL) {
+        ll->head = new;
+        new->data = data;
+        new->next = NULL;
+    } else {
+        new->next = ll->head;
+        new->data = data;
+        ll->head = new;
+    }
+    return true; // Insertion successful
+}
+
+bool linked_list_insert_end(struct linked_list * ll, unsigned int data) {
+    if (ll == NULL) {
+        return false; // Invalid linked list or index
+    }
+
+    struct node *new = (struct node *)malloc_fptr(sizeof(struct node));
+    if (new == NULL) {
+        return false; // Memory allocation failed
+    }
+
+    new->data = data;
+    new->next = NULL;
+
+    if (ll->head == NULL) {
+        ll->head = new; // Insert at the beginning if the list is empty
+        return true;
+    }
+
+    struct node *current = ll->head;
+    while (current->next != NULL) {
+        current = current->next; // Traverse to the end of the list
+    }
+    current->next = new; // Insert at the end
+    return true; // Insertion successful
+}
+
+size_t linked_list_size(struct linked_list * ll) {
+    if (ll == NULL) {
+        return SIZE_MAX; // Invalid linked list
+    }
+    if (ll->head == NULL) {
+        return 0; // Empty linked list
+    }
+    size_t ll_size = 0;
+    struct node *current = ll->head;
+    while (current != NULL) {
+        ll_size++;
+        current = current->next;
+    }
+    return ll_size + 1;
+}
+
+bool linked_list_delete(struct linked_list * ll) {
+    if (ll == NULL) {
+        return false; // Invalid linked list
+    }
+    struct node *current = ll->head;
+    struct node *next_node;
+
+    while (current != NULL) {
+        next_node = current->next;
+        free_fptr((void *)current);
+        current = next_node;
+    }
+
+    ll->head = NULL;
+    return true;
+}
+
+struct linked_list * linked_list_create(void) {
+    struct linked_list *ll = (struct linked_list *)malloc_fptr(sizeof(struct linked_list));
+    if (ll == NULL) {
+        return NULL; // Memory allocation failed
+    }
+    ll->head = NULL; // Initialize the head to NULL for an empty list
+    return ll;
+}
+
